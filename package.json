@@ -1,6 +1,6 @@
 {
-  "name": "cale",
-  "version": "0.0.1",
+  "name": "cale-ai",
+  "version": "0.0.2",
   "description": "AI for DIY HealthScience Toolkit",
   "main": "src/index.js",
   "scripts": {

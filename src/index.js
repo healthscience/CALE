@@ -16,7 +16,7 @@ const events = require('events')
 
 var CALE = function () {
   events.EventEmitter.call(this)
-  this.livePopulation = new Poplution()
+  this.livePopulation = new Poplulation()
   this.liveGene = new Gene()
   this.askCALE()
 }
