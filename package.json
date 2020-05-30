@@ -1,8 +1,8 @@
 {
   "name": "cale",
-  "version": "0.0.1",
+  "version": "0.5.1",
   "description": "AI for DIY HealthScience Toolkit",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,7 +14,7 @@
     "ai"
   ],
   "author": "aboynejames",
-  "license": "GPL-3.0-or-later",
+  "license": "GPLv3",
   "bugs": {
     "url": "https://github.com/healthscience/CALE/issues"
   },
