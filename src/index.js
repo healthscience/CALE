@@ -9,10 +9,10 @@
 * @license    http://www.gnu.org/licenses/old-licenses/gpl-3.0.html
 * @version    $Id$
 */
-import Poplulation from './population/population.js'
-import Genes from './gene/gene.js'
-import util from 'util'
-import events from 'events'
+const Poplulation = require('./population/population.js')
+const Genes = require('./gene/gene.js')
+const util = require('util')
+const events = require('events')
 
 var CALE = function () {
   events.EventEmitter.call(this)
