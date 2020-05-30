@@ -10,7 +10,7 @@
 * @version    $Id$
 */
 import Population from './population/population.js'
-import Genes from './gene/gene.js'
+import Gene from './gene/gene.js'
 import util from 'util'
 import events from 'events'
 
