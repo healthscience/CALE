@@ -16,9 +16,10 @@ import events from 'events'
 
 var CALE = function () {
   events.EventEmitter.call(this)
-  this.livePopulation = new Population()
   this.liveGene = new Gene()
+  this.livePopulation = new Population(this.liveGene)
   this.askCALE()
+  this.peerlinkListenser()
 }
 
 /**
@@ -34,6 +35,49 @@ util.inherits(CALE, events.EventEmitter)
 */
 CALE.prototype.askCALE = function (question) {
   console.log('How can I help you learn?')
+}
+
+/**
+*
+* @method CALEmanager
+*
+*/
+CALE.prototype.CALEmanager = function () {
+  console.log('start stop control coordinate data compute flows')
+
+}
+
+/**
+*
+* @method peerlinkListenser
+*
+*/
+CALE.prototype.peerlinkListenser = function () {
+  let localthis = this
+  this.livePopulation.on('PeerLinkStatus', (data) => {
+    let testToken = { publickey: 'e97bd0056edae2a5da49b7868167b6c9d13bc3d5', token:'CVUbN3zCmvubqNpJ3ru6YLtwLRMv6kfa9NmRAzTGSiUQ', cnrl: 'cnrl-33221101' }
+    let message = {}
+    message.type = 'safeflow'
+    message.reftype = 'ignore'
+    message.action = 'auth'
+    message.network = 'cloud'
+    message.settings = testToken
+    const safeFlowMessage = JSON.stringify(message)
+    localthis.livePopulation.completeAuthorisation(safeFlowMessage)
+  })
+  // initial contracts
+  this.livePopulation.on('peerContracts', (data) => {
+    localthis.populationManager(data)
+  })
+}
+
+/**
+*
+* @method populationManager
+*
+*/
+CALE.prototype.populationManager = function (data) {
+  this.livePopulation.createPopulation(data)
 }
 
 export default CALE
