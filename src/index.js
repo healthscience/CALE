@@ -55,7 +55,7 @@ CALE.prototype.CALEmanager = function () {
 CALE.prototype.peerlinkListenser = function () {
   let localthis = this
   this.livePopulation.on('PeerLinkStatus', (data) => {
-    let testToken = { publickey: 'e97bd0056edae2a5da49b7868167b6c9d13bc3d5', token:'CVUbN3zCmvubqNpJ3ru6YLtwLRMv6kfa9NmRAzTGSiUQ', cnrl: 'cnrl-33221101' }
+    let testToken = { publickey: '', token:'', cnrl: 'cnrl-33221101' }
     let message = {}
     message.type = 'safeflow'
     message.reftype = 'ignore'
@@ -77,6 +77,7 @@ CALE.prototype.peerlinkListenser = function () {
 *
 */
 CALE.prototype.populationManager = function (data) {
+  console.log('start population manager')
   this.livePopulation.createPopulation(data)
 }
 

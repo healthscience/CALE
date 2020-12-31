@@ -21,6 +21,10 @@ var Population = function (gene) {
   this.geneLive = gene
   this.liveclient = new client()
   this.connectPeerLink()
+  this.genesisPopulation = []
+  this.populationSize = 365
+  this.generationcycles = 180
+  this.currentDay = []
 }
 
 /**
@@ -48,9 +52,17 @@ Population.prototype.connectPeerLink = function () {
     })
     localthis.on('experimentRefContract', (data) => {
       console.log('ask for experiment data')
+      console.log(data)
       // send message to PeerLink
       connection.sendUTF(data)
     })
+    localthis.on('newFuture', (data) => {
+      console.log('make prediction for future day t + 1')
+      console.log(data)
+      // send message to PeerLink
+      connection.sendUTF(data)
+    })
+
     console.log('WebSocket Client Connected')
     // send confirmation of 'secure' connection to connectPeerLink
     localthis.emit('PeerLinkStatus', 'active')
@@ -76,9 +88,15 @@ Population.prototype.connectPeerLink = function () {
             }
           } else if (backJSON.type === 'publiclibrary') {
             localthis.emit('peerContracts', backJSON)
+          } else if (backJSON.type === 'ecssummary') {
+            console.log('entity summary or report error')
+            localthis.startPopulation(backJSON)
+            if (backJSON.shellID === 'error') {
+              console.log('error on input try again')
+            }
           } else if (backJSON.type === 'newEntity') {
-            console.log('entity data per network experiment')
-            localthis.emit('entityData', backJSON)
+            // console.log('entity data per network experiment')
+            // localthis.startPopulation(backJSON)
           }
         }
     })
@@ -88,12 +106,69 @@ Population.prototype.connectPeerLink = function () {
 
 /**
 *
-* @method completeAuthorisation
+* @method
 *
 */
 Population.prototype.completeAuthorisation = function (safeFlowMessage) {
   console.log('start athor of safeFLOW')
   this.emit('authsafeflow', safeFlowMessage)
+}
+
+/**
+*
+* @method startPopulation
+*
+*/
+Population.prototype.startPopulation = function (peerData) {
+  console.log('start population')
+  this.genesisPopulation.push({ id: 'live', data: [0, 0, 1, 0, 5], model: [1, 2, 3] })
+  // how many day profiles to create?
+  let populationLeft = this.populationSize - this.genesisPopulation.length
+  // use random to populate 365 starting day profiles
+  let randPopulation = this.randPopulation(populationLeft)
+  console.log('inital starting population')
+  let firstPopulation = [...this.genesisPopulation, ...randPopulation]
+  this.currentDay = { id: 'currnet', data: [1, 0, 1, 0, 4], model: [1, 2, 3] }
+  this.generationcycles = [1]
+  for (let cycle of this.generationcycles) {
+    let bestModel = this.geneLive.newGeneration(cycle, firstPopulation, this.currentDay)
+    console.log('new gen COMPLETE')
+    console.log(bestModel)
+    this.makeFuture()
+  }
+  console.log('CALE finished learning')
+}
+
+/**
+* form knowledge bundle input for safeFLOW-ECS
+* @method makeFuture
+*
+*/
+Population.prototype.makeFuture = function (model) {
+  let message = {}
+  message.type = 'safeflow'
+  message.reftype = 'ignore'
+  message.action = 'predictionexperiment'
+  message.data = {} // ECSbundle
+  const safeFlowMessage = JSON.stringify(message)
+  this.emit('newFuture', safeFlowMessage)
+}
+
+/**
+*
+* @method randPopulation
+*
+*/
+Population.prototype.randPopulation = function (size) {
+  // use random movement (steps) value within a constraint
+  // per 24hrs 6 hrs 1hr 1 min??
+  let newPopulation = []
+  let num = size
+  while(num >=1) {
+    newPopulation.push({ id: num, data: [0, 0, 2, 0, num], model: [1, 2, 3] })
+    num--
+  }
+  return newPopulation
 }
 
 /**
@@ -109,8 +184,6 @@ Population.prototype.createPopulation = function (data) {
   message.data = {} // ECSbundle
   const safeFlowMessage = JSON.stringify(message)
   this.emit('experimentRefContract', safeFlowMessage)
-  // assume listeners, create new generation of population
-  this.geneLive.newGeneration()
 }
 
 export default Population
